@@ -58,8 +58,15 @@ h1 .tag{display:inline-block;padding:.05em .3em .12em;border-radius:22px;backgro
 .dock-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .dock h2{margin:0;font:900 22px/1.1 Georgia, "Times New Roman", serif;color:#173b78}
 .dock-remaining{color:#207a77;font-weight:900;font-size:16px}.nav{display:flex;gap:8px}.arrow{inline-size:36px;block-size:36px;border-radius:12px;border:2px solid #bce4dd;background:#fff;color:#237370;font-size:18px;font-weight:900}
-.destinations[hidden]{display:none}.destinations{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px}.choice,.returnbtn{border-radius:999px;padding:10px 14px;border:2px solid #beded7;background:#fff;font-weight:800;color:#235f64;box-shadow:0 2px 0 rgba(24,101,97,.12)}
-.choice.full{opacity:.55}.returnbtn{background:#fff4f1;border-color:#f5c0b4;color:#9f4130}
+.destinations[hidden]{display:none}.destinations{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px}.choice,.returnbtn{border-radius:999px;padding:10px 14px;background:#fff;font-weight:900;color:#235f64;box-shadow:0 2px 0 rgba(24,101,97,.12);transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease}
+.choice{border:3px solid #beded7}
+.choice:hover{transform:translateY(-1px)}
+.choice.choice-separate{border-color:#47bf72;color:#176946;box-shadow:0 2px 0 rgba(24,101,97,.12), 0 0 0 3px rgba(71,191,114,.10)}
+.choice.choice-separate:hover{box-shadow:0 2px 0 rgba(24,101,97,.12), 0 0 0 4px rgba(71,191,114,.18), 0 5px 12px rgba(48,160,93,.18)}
+.choice.choice-joint{border-color:#ef79a8;color:#9f255b;box-shadow:0 2px 0 rgba(24,101,97,.12), 0 0 0 3px rgba(239,121,168,.10)}
+.choice.choice-joint:hover{box-shadow:0 2px 0 rgba(24,101,97,.12), 0 0 0 4px rgba(239,121,168,.18), 0 5px 12px rgba(206,73,128,.18)}
+.choice.full{opacity:.55;filter:saturate(.82)}
+.returnbtn{border:3px solid #f5c0b4;background:#fff4f1;color:#9f4130}
 .strip{overflow-x:auto;overflow-y:hidden;padding:4px 2px 2px;scrollbar-color:#46c8bb transparent;scrollbar-width:thin}
 .pool{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,minmax(86px,auto));gap:10px;align-items:start;padding-bottom:4px;min-width:max-content}
 .pool>.tile{min-width:284px;max-width:304px;min-height:86px}
@@ -138,12 +145,12 @@ h1 .tag{display:inline-block;padding:.05em .3em .12em;border-radius:22px;backgro
 <script>
 'use strict';
 const CATEGORIES=[
- {id:'contrast',prefix:'РАЗДЕЛЬНО:',title:'противопоставление с союзом А',brief:'С союзом А',writing:'separate'},
+ {id:'contrast',prefix:'РАЗДЕЛЬНО:',title:'противопоставление с союзом А',brief:'Противопоставление с А',writing:'separate'},
  {id:'short',prefix:'РАЗДЕЛЬНО:',title:'краткие причастия',brief:'Краткие',writing:'separate'},
- {id:'dep',prefix:'РАЗДЕЛЬНО:',title:'с зависимыми словами',brief:'Зависимые слова',writing:'separate'},
- {id:'degree',prefix:'СЛИТНО:',title:'с наречиями меры и степени',brief:'Мера и степень',writing:'joint'},
- {id:'bare',prefix:'СЛИТНО:',title:'полные причастия без зависимых слов',brief:'Без зависимых',writing:'joint'},
- {id:'inseparable',prefix:'СЛИТНО —',title:'без НЕ не употребляются',brief:'Без НЕ не бывает',writing:'joint'}
+ {id:'dep',prefix:'РАЗДЕЛЬНО:',title:'с зависимыми словами',brief:'С зав. словами',writing:'separate'},
+ {id:'degree',prefix:'СЛИТНО:',title:'с наречиями меры и степени',brief:'С наречиями меры',writing:'joint'},
+ {id:'bare',prefix:'СЛИТНО:',title:'полные причастия без зависимых слов',brief:'Полное без зав. слов',writing:'joint'},
+ {id:'inseparable',prefix:'СЛИТНО —',title:'без НЕ не употребляются',brief:'Нельзя без НЕ',writing:'joint'}
 ];
 // Ровно 42 причастия (7 на колонку) и 7 прилагательных-ловушек (null).
 // Все 49 карточек равноправны в общей ленте; никакой подсказки до проверки.
@@ -261,7 +268,7 @@ function render(){document.querySelector('.app').classList.toggle('is-reviewed',
  $('counter').textContent=Object.keys(state.assign).length+' / 42 распределено';
  $('remaining').textContent='В ленте: '+left;
  const q=$('choices');q.replaceChildren();q.hidden=state.selected===null;
- if(state.selected!==null){CATEGORIES.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=c.brief;if(numIn(c.id)>=7&&state.assign[state.selected]!==c.id)b.classList.add('full');b.title=c.prefix+' '+c.title;
+ if(state.selected!==null){CATEGORIES.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='choice';b.classList.add(c.writing==='separate'?'choice-separate':'choice-joint');b.textContent=c.brief;if(numIn(c.id)>=7&&state.assign[state.selected]!==c.id)b.classList.add('full');b.title=c.prefix+' '+c.title;
  b.addEventListener('click',()=>assign(state.selected,c.id));q.append(b)});
  if(placed(state.selected)){const back=document.createElement('button');back.type='button';back.className='returnbtn';back.textContent='Вернуть в общую ленту';back.addEventListener('click',()=>unassign(state.selected));q.append(back)}
  }
